@@ -4,8 +4,9 @@ require 'json'
 module Twocheckout
   class API
     API_BASE = 'https://www.2checkout.com/api/'
+    SANDBOX_API_BASE = 'https://sandbox.2checkout.com/api/'
     CHECKOUT_BASE = 'https://www.2checkout.com/checkout/api/'
-    SANDBOX_BASE = 'https://sandbox.2checkout.com/checkout/api/'
+    SANDBOX_CHECKOUT_BASE = 'https://sandbox.2checkout.com/checkout/api/'
     API_VERSION = '1'
 
     def self.credentials=(opts)
@@ -35,7 +36,7 @@ module Twocheckout
 
     def self.set_opts(http_method, api_call, params = null)
       if api_call == 'authService'
-        url = @@sandbox? SANDBOX_BASE : CHECKOUT_BASE
+        url = @@sandbox? SANDBOX_CHECKOUT_BASE : CHECKOUT_BASE
         url += API_VERSION + '/' + @@seller_id + '/rs/' + api_call
         params['sellerId'] = @@seller_id
         params['privateKey'] = @@private_key
@@ -50,7 +51,8 @@ module Twocheckout
           :payload => params.to_json,
         }
       else
-        url = API_BASE + api_call
+        url = @@sandbox? SANDBOX_API_BASE : API_BASE
+        url += api_call
         if http_method == :get
           url += hash_to_querystring(params)
           params = nil
